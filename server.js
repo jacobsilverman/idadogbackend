@@ -12,7 +12,7 @@ app.use(cors());
 const PORT = process.env.PORT || 5000;
 
 app.post('/send-email', (req, res) => {
-    const { to, subject, text } = req.body;
+    const { to, subject, html } = req.body;
 
     const transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
@@ -26,7 +26,7 @@ app.post('/send-email', (req, res) => {
         from: process.env.EMAIL_USER,
         to,
         subject,
-        text,
+        html,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
