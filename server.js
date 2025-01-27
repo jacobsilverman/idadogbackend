@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(cors({
     origin: ['https://www.idadog.com', 'http://localhost:5173'],  // replace with your GitHub Pages domain
     credentials: true,
+    methods: ['GET', 'POST'],
 }));
 
 const PORT = process.env.PORT || 5000;
