@@ -15,8 +15,5 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
     "nodemailer": "^6.9.16"
-  },
-  "engines": {
-    "node": "14.x"
   }
 }
