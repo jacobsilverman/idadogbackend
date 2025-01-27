@@ -39,6 +39,40 @@ app.post('/send-email', (req, res) => {
         }
     });
 });
+app.get('/confirm-reservation', async (req, res) => {
+    try {
+        // Extract query parameters
+        const { n: name, p: phone, s: start, e: end, st: startTime, et: endTime } = req.query;
+
+        if (!name || !start || !end) {
+            return res.status(400).send('Missing required fields');
+        }
+
+        // Save to Firebase (Firestore example)
+        // await db.collection('reservations').add({
+        //     name,
+        //     phone,
+        //     start,
+        //     end,
+        //     startTime: startTime || null,
+        //     endTime: endTime || null,
+        //     confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
+        // });
+
+        // Send a success message
+        res.send(`
+            <html>
+                <body style="font-family: sans-serif; text-align: center;">
+                    <h1>Reservation Confirmed!</h1>
+                    <p>Thank you for confirming your reservation. We're excited to serve you ${name}!</p>
+                </body>
+            </html>
+        `);
+    } catch (error) {
+        console.error('Error confirming reservation:', error);
+        res.status(500).send('Error confirming reservation');
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
