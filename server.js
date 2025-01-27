@@ -2,6 +2,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const admin = require('firebase-admin');
 
 dotenv.config();
 
@@ -10,6 +11,16 @@ app.use(express.json());
 app.use(cors());
 
 const PORT = process.env.PORT || 5000;
+
+// Replace './path/to/serviceAccountKey.json' with the path to your downloaded key
+const serviceAccount = require('./config/idadogwebsite-firebase-adminsdk-fbsvc-af26f3e8f0.json');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://IdaDog.firebaseio.com', // Replace with your project's database URL
+});
+
+const db = admin.firestore();
 
 app.post('/send-email', (req, res) => {
     const { to, subject, html } = req.body;
@@ -39,6 +50,7 @@ app.post('/send-email', (req, res) => {
         }
     });
 });
+
 app.get('/confirm-reservation', async (req, res) => {
     try {
         // Extract query parameters
@@ -49,15 +61,15 @@ app.get('/confirm-reservation', async (req, res) => {
         }
 
         // Save to Firebase (Firestore example)
-        // await db.collection('reservations').add({
-        //     name,
-        //     phone,
-        //     start,
-        //     end,
-        //     startTime: startTime || null,
-        //     endTime: endTime || null,
-        //     confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
-        // });
+        await db.collection('reservations').add({
+            name,
+            phone,
+            start,
+            end,
+            startTime: startTime || null,
+            endTime: endTime || null,
+            confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
 
         // Send a success message
         res.send(`
@@ -71,6 +83,23 @@ app.get('/confirm-reservation', async (req, res) => {
     } catch (error) {
         console.error('Error confirming reservation:', error);
         res.status(500).send('Error confirming reservation');
+    }
+});
+
+app.get('/reservations', async (req, res) => {
+    try {
+        const reservationsSnapshot = await db.collection('reservations').get();
+
+        // Convert Firestore documents to an array of objects
+        const reservations = reservationsSnapshot.docs.map((doc) => ({
+            id: doc.id, // Include document ID for reference
+            ...doc.data(),
+        }));
+
+        res.status(200).json(reservations);
+    } catch (error) {
+        console.error('Error retrieving reservations:', error);
+        res.status(500).send('Failed to retrieve reservations');
     }
 });
 
