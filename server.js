@@ -13,7 +13,7 @@ app.use(cors());
 const PORT = process.env.PORT || 5000;
 
 // Replace './path/to/serviceAccountKey.json' with the path to your downloaded key
-const serviceAccount = require('./config/idadogwebsite-firebase-adminsdk-fbsvc-af26f3e8f0.json');
+const serviceAccount = require('./config/idadogwebsite-firebase-adminsdk-fbsvc-bc91c86757.json');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
