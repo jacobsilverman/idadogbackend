@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: '*',  // replace with your GitHub Pages domain
+    origin: ['https://www.idadog.com', 'http://localhost:5173'],  // replace with your GitHub Pages domain
     credentials: true,
 }));
 
@@ -33,7 +33,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://IdaDog.firebaseio.com', // Replace with your project's database URL
 });
-
 
 const db = admin.firestore();
 
