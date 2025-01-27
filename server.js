@@ -8,7 +8,10 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://www.idadog.com',  // replace with your GitHub Pages domain
+}));
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -19,6 +22,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: 'https://IdaDog.firebaseio.com', // Replace with your project's database URL
 });
+
 
 const db = admin.firestore();
 
