@@ -10,6 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({
     origin: '*',  // replace with your GitHub Pages domain
+    credentials: true,
 }));
 
 const PORT = process.env.PORT || 5000;
