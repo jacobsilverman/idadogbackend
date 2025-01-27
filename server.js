@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'https://www.idadog.com',  // replace with your GitHub Pages domain
+    origin: '*',  // replace with your GitHub Pages domain
 }));
 
 const PORT = process.env.PORT || 5000;
