@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: ['*', 'https://www.idadog.com', 'http://localhost:5173', 'https://jacobsilverman.github.io',],  // replace with your GitHub Pages domain
+    origin: ['https://www.idadog.com', 'http://localhost:5173', 'https://jacobsilverman.github.io',],  // replace with your GitHub Pages domain
     credentials: true,
     methods: ['GET', 'POST'],
 }));
@@ -29,11 +29,6 @@ const serviceAccount = {
     client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT,
     universe_domain: "googleapis.com"
 };
-
-console.log("please work: ", process.env.FIREBASE_PRIVATE_KEY);
-
-
-console.log("please work test: ", process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'));
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
