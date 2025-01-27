@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: ['https://www.idadog.com', 'http://localhost:5173'],  // replace with your GitHub Pages domain
+    origin: ['https://www.idadog.com', 'http://localhost:5173', 'https://jacobsilverman.github.io',],  // replace with your GitHub Pages domain
     credentials: true,
     methods: ['GET', 'POST'],
 }));
