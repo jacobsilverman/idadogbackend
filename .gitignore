@@ -36,6 +36,9 @@ coverage/
 dist/
 build/
 
+#secret files
+config/
+
 # Temporary files
 tmp/
 temp/
