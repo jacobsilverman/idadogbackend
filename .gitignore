@@ -35,7 +35,6 @@ coverage/
 # Build files
 dist/
 build/
-config/
 
 # Temporary files
 tmp/
