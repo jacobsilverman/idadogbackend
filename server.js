@@ -40,6 +40,17 @@ const db = admin.firestore();
 app.post('/send-email', (req, res) => {
     const { to, subject, html } = req.body;
 
+    // Validate the required fields
+    if (!to || !subject || !html) {
+        return res.status(400).send('Missing required fields: to, subject, and html');
+    }
+
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail(to)) {
+        return res.status(400).send('Invalid email address');
+    }
+
     const transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,
         auth: {
@@ -56,20 +67,31 @@ app.post('/send-email', (req, res) => {
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
+        console.log("info: ",info);
+        console.log("error: ",error);
+
         if (error) {
-            console.log(error);
-            res.status(500).send('Error sending email');
-        } else {
-            console.log('Email sent: ' + info.response);
-            res.send('Email sent successfully');
+            console.error('Error sending email:', error);
+
+            // Provide specific status codes based on the type of error
+            if (error.responseCode) {
+                // Use the error's response code if provided
+                return res.status(error.responseCode).send(`Error sending email: ${error.message}`);
+            } else {
+                // Default to 500 for unexpected errors
+                return res.status(500).send('Error sending email. Please try again later.');
+            }
         }
+
+        console.log('Email sent: ' + info.response);
+        res.status(200).send('Email sent successfully');
     });
 });
 
 
 app.post('/delete-reservation', async (req, res) => {
     const { id } = req.body;
-
+    
     if (!id) {
         return res.status(400).send('Reservation ID is required');
     }
