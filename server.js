@@ -112,14 +112,32 @@ app.post('/delete-reservation', async (req, res) => {
     }
 });
 
-
 app.get('/confirm-reservation', async (req, res) => {
     try {
         // Extract query parameters
-        const { n: name, p: phone, em:email, s: start, e: end, st: startTime, et: endTime } = req.query;
+        const { n: name, p: phone, em: email, s: start, e: end, st: startTime, et: endTime } = req.query;
 
-        if (!name || !start || !end) {
+        if (!name || !start || !end || !email) {
             return res.status(400).send('Missing required fields');
+        }
+
+        // Check if the reservation is already confirmed
+        const existingReservation = await db.collection('reservations')
+            .where('email', '==', email)
+            .where('start', '==', start)
+            .where('end', '==', end)
+            .get();
+
+        if (!existingReservation.empty) {
+            // Reservation already exists
+            return res.send(`
+                <html>
+                    <body style="font-family: sans-serif; text-align: center;">
+                        <h1>Reservation Already Confirmed!</h1>
+                        <p>This reservation has already been confirmed for ${name}.</p>
+                    </body>
+                </html>
+            `);
         }
 
         // Save to Firebase (Firestore example)
@@ -139,7 +157,7 @@ app.get('/confirm-reservation', async (req, res) => {
             <html>
                 <body style="font-family: sans-serif; text-align: center;">
                     <h1>Reservation Confirmed!</h1>
-                    <p>Thank you for confirming your reservation. We're excited to serve you ${name}!</p>
+                    <p>Thank you for confirming your reservation. We're excited to serve you, ${name}!</p>
                 </body>
             </html>
         `);
@@ -148,6 +166,7 @@ app.get('/confirm-reservation', async (req, res) => {
         res.status(500).send('Error confirming reservation');
     }
 });
+
 
 app.get('/reservations', async (req, res) => {
     try {
