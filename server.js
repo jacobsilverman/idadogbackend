@@ -32,7 +32,7 @@ const serviceAccount = {
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://IdaDog.firebaseio.com', // Replace with your project's database URL
+    databaseURL: 'https://IdaDog.firebaseio.com',
 });
 
 const db = admin.firestore();
@@ -69,7 +69,7 @@ app.post('/send-email', (req, res) => {
 app.get('/confirm-reservation', async (req, res) => {
     try {
         // Extract query parameters
-        const { n: name, p: phone, s: start, e: end, st: startTime, et: endTime } = req.query;
+        const { n: name, p: phone, em:email, s: start, e: end, st: startTime, et: endTime } = req.query;
 
         if (!name || !start || !end) {
             return res.status(400).send('Missing required fields');
@@ -79,6 +79,7 @@ app.get('/confirm-reservation', async (req, res) => {
         await db.collection('reservations').add({
             name,
             phone,
+            email,
             start,
             end,
             startTime: startTime || null,
