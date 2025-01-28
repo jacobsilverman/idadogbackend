@@ -66,6 +66,31 @@ app.post('/send-email', (req, res) => {
     });
 });
 
+
+app.post('/delete-reservation', async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).send('Reservation ID is required');
+    }
+
+    try {
+        const reservationRef = db.collection('reservations').doc(id);
+        const reservationDoc = await reservationRef.get();
+
+        if (!reservationDoc.exists) {
+            return res.status(404).send('Reservation not found');
+        }
+
+        await reservationRef.delete();
+        res.status(200).send(`Reservation with ID: ${id} successfully deleted`);
+    } catch (error) {
+        console.error('Error deleting reservation:', error);
+        res.status(500).send('Failed to delete reservation');
+    }
+});
+
+
 app.get('/confirm-reservation', async (req, res) => {
     try {
         // Extract query parameters
