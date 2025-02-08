@@ -2,7 +2,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const path = require('path');
+// const path = require('path');
 const admin = require('firebase-admin');
 
 dotenv.config();
@@ -187,12 +187,12 @@ app.get('/reservations', async (req, res) => {
 });
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../IdaDog/dist')));
+// app.use(express.static(path.join(__dirname, '../IdaDog/dist')));
 
 // Catch-all handler for client-side routing (React Router)
-app.get('/schedule', (req, res) => {
-    res.sendFile(path.join(__dirname, '../IdaDog/dist/index.html'));
-});
+// app.get('/schedule', (req, res) => {
+//     res.sendFile(path.join(__dirname, '../IdaDog/dist/index.html'));
+// });
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
