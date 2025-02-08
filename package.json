@@ -14,7 +14,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "path": "^0.12.7"
   },
   "engines": {
     "node": "18.x"

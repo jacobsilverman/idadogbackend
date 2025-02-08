@@ -2,6 +2,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 const admin = require('firebase-admin');
 
 dotenv.config();
@@ -183,6 +184,14 @@ app.get('/reservations', async (req, res) => {
         console.error('Error retrieving reservations:', error);
         res.status(500).send('Failed to retrieve reservations');
     }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+// Catch-all handler for client-side routing (React Router)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(PORT, () => {
