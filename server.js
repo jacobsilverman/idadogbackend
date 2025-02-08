@@ -187,11 +187,11 @@ app.get('/reservations', async (req, res) => {
 });
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, '../IdaDog/dist')));
 
 // Catch-all handler for client-side routing (React Router)
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get('/schedule', (req, res) => {
+    res.sendFile(path.join(__dirname, '../IdaDog/dist/index.html'));
 });
 
 app.listen(PORT, () => {
