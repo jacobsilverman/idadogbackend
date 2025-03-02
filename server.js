@@ -194,6 +194,19 @@ app.get('/reservations', async (req, res) => {
 //     res.sendFile(path.join(__dirname, '../IdaDog/dist/index.html'));
 // });
 
+
+app.post("/api/ebay/account-deletion", (req, res) => {
+    const verificationToken = "rcA3OOtQRlh8DbVsXDBewxSmK9FQ8AD4S"; // Replace with your token
+
+    if (req.headers["x-ebay-verification-token"] !== verificationToken) {
+        return res.status(403).json({ error: "Invalid verification token" });
+    }
+
+    console.log("Received eBay account deletion notification:", req.body);
+
+    res.status(200).send("Notification received");
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
