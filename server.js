@@ -2,15 +2,17 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const axios = require('axios');
 // const path = require('path');
 const admin = require('firebase-admin');
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors({
-    origin: ['https://idadog.com', 'https://www.idadog.com', 'http://localhost:5173', 'https://jacobsilverman.github.io',],  // replace with your GitHub Pages domain
+    origin: ['https://idadog.com', 'https://www.idadog.com', 'http://localhost:5173', 'https://jacobsilverman.github.io', 'https://pokemonlookup.com', 'https://www.pokemonlookup.com'],  // replace with your GitHub Pages domain
     credentials: true,
     methods: ['GET', 'POST'],
 }));
@@ -183,6 +185,50 @@ app.get('/reservations', async (req, res) => {
     } catch (error) {
         console.error('Error retrieving reservations:', error);
         res.status(500).send('Failed to retrieve reservations');
+    }
+});
+
+
+const VITE_OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";  // Example for GPT
+const VITE_OPENAI_API_KEY= process.env.VITE_OPENAI_API_KEY;
+
+app.post("/pokemonlookup/openai/fetch", async (req, res) => {
+    try {
+        const { query } = req.body;
+        let pokemonSets = "Base Set, Jungle, Fossil, Base Set 2, Team Rocket, Gym Heroes, Gym Challenge, Neo Genesis, Neo Discovery, Neo Revelation, Neo Destiny, Legendary Collection, Expedition Base Set, Aquapolis, Skyridge, EX Ruby & Sapphire, EX Sandstorm, EX Dragon, EX Team Magma vs Team Aqua, EX Hidden Legends, EX FireRed & LeafGreen, EX Team Rocket Returns, EX Deoxys, EX Emerald, EX Unseen Forces, EX Delta Species, EX Legend Maker, EX Holon Phantoms, EX Crystal Guardians, EX Dragon Frontiers, EX Power Keepers, Diamond & Pearl, Mysterious Treasures, Secret Wonders, Great Encounters, Majestic Dawn, Legends Awakened, Stormfront, Platinum, Rising Rivals, Supreme Victors, Arceus, HeartGold & SoulSilver, Unleashed, Undaunted, Triumphant, Black & White, Emerging Powers, Noble Victories, Next Destinies, Dark Explorers, Dragons Exalted, Dragon Vault, Boundaries Crossed, Plasma Storm, Plasma Freeze, Plasma Blast, Legendary Treasures, Kalos Starter Set, XY, Flashfire, Furious Fists, Phantom Forces, Primal Clash, Double Crisis, Roaring Skies, Ancient Origins, BREAKthrough, BREAKpoint, Generations, Fates Collide, Steam Siege, Evolutions, Sun & Moon, Guardians Rising, Burning Shadows, Shining Legends, Crimson Invasion, Ultra Prism, Forbidden Light, Celestial Storm, Dragon Majesty, Lost Thunder, Team Up, Detective Pikachu, Unbroken Bonds, Unified Minds, Hidden Fates, Cosmic Eclipse, Sword & Shield, Rebel Clash, Darkness Ablaze, Champion's Path, Vivid Voltage, Battle Styles, Chilling Reign, Evolving Skies, Celebrations, Fusion Strike, Brilliant Stars, Astral Radiance, Pokemon Go, Lost Origins, Silver Tempest, Crown Zenith, Scarlet & Violet, Paldea Evolved, Obsidian Flames, 151, Paradox Rift, Paldean Fates, Temporal Forces, Twilight Masquerade, Shrouded Fable, Stellar Crown, Surging Sparks, Prismatic Evolutions, Journey Together";
+        pokemonSets = pokemonSets.split(",").reverse().join(",");
+
+        const prompt = `From the image make an array thats size is determined by the number of pokemon cards seen in the image. Look at each card and gather these pieces of information: the name of the pokemon on the card (not the evolution in the top left), zoom in and please very carefully read the set number seen at the bottom left or right which will have two numbers and a slash in between, and based on the set number determine the set that released this card (please refer to this list ${pokemonSets} to determine the set name). You might have trouble determining the set number and if the image is hard to read please try to determine the set it comes from and research what the set number would be instead of blindly following the image. Write it in this format '{pokemon} {set #} {set}', with no other text, then add that string value to the array`
+
+        const response = await axios.post(VITE_OPENAI_API_URL, 
+        {
+            model: "gpt-4o-mini",
+            messages: [
+            {
+                role: "user",
+                content: [
+                { type: "text", text: prompt },
+                {
+                    type: "image_url",
+                    image_url: {
+                    "url": query,
+                    },
+                },
+                ],
+            },
+            ],
+        },
+        {
+            headers: {
+            "Authorization": `Bearer ${VITE_OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+            },
+        });
+        console.log(response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error("Error fetching open ai generated items:", error);
+        res.status(500).json({ error: error?.response?.data || "Failed to fetch data from eBay" });
     }
 });
 
