@@ -198,7 +198,7 @@ app.post("/pokemonlookup/openai/fetch", async (req, res) => {
       const { query } = req.body;
   
   
-      const prompt =`From the image, create an array where the size is determined by the number of Pokémon cards seen. For each card, extract the following information:
+      const prompt =`From the image, create an array where the size is determined by the number of Pokémon cards seen and ignore anything in the picture that isn't a pokemon card. For each card, extract the following information:
   
   Pokémon Name: Read the name of the Pokémon on the card (not the evolution in the top left).
   
